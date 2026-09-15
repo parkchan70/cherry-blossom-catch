@@ -519,7 +519,8 @@
     // ===== 4. 메인 루프 =====
     function renderLoop(ts) {
         requestAnimationFrame(renderLoop);
-        let dt = lastTs === null ? 0 : (ts - lastTs) / 1000;
+        const rawDt = lastTs === null ? 0 : (ts - lastTs) / 1000;
+        let dt = rawDt;
         lastTs = ts;
         dt = Math.min(dt, 0.1);   // 탭 전환 등으로 오래 멈췄다가 돌아와도 한 번에 튀지 않게
 
@@ -546,7 +547,7 @@
 
         // 타이머
         if (state === 'playing') {
-            timeLeftMs -= dt * 1000;
+            timeLeftMs -= Math.min(rawDt, 1) * 1000;   // 타이머는 실제 시간 기준 (느린 PC에서도 정확)
             updateTimeDisplay();
             if (timeLeftMs <= 0) { timeLeftMs = 0; endGame("시간 초과!"); }
         }
